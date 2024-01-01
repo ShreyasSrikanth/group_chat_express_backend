@@ -12,6 +12,13 @@ exports.postItem = (req, res, next) => {
     
     const saltround = 10;
 
+    Signup.findOne({where: {email:email}})
+    .then(existingUser => {
+        if(existingUser){
+            return res.status(404).json({message: 'User already exists'})
+        }
+    })
+
     bcrypt.hash(pass, saltround, async (err, hash) => {
         Signup.create({
             name: name,
