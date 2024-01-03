@@ -9,11 +9,6 @@ exports.postItem = (req, res, next) => {
     const email = req.body.email;
     const phone = req.body.phone;
     const pass = req.body.pass;
-
-    console.log("name",name);
-    console.log("email",email);
-    console.log("phone",phone);
-    console.log("pass",pass)
     
     const saltround = 10;
 
@@ -49,3 +44,30 @@ exports.postItem = (req, res, next) => {
             res.status(500).json({ error: 'Database error' });
         });
 };
+
+function generateToken(id,name){
+    return jwt.sign({userId:id,userName:name},'shreyassrikanth')
+}
+
+exports.loginCredentials = async (req,res,next) => {
+    let email = req.body.email;
+    let pass = req.body.pass;
+
+    let user = await Signup.findOne({where:{email:email}});
+
+    try{
+        if(user){
+            const isMatch = await bcrypt.compare(pass,user.pass);
+            
+            if(isMatch){
+                res.status(200).json({message:'Login Succesful', token: generateToken(user.id,user.name)});
+            } else {
+                res.status(404).json({message:"Invalid email or password"});
+            }
+        } else {
+            res.status(404).json({ message: 'Invalid emaill or password' });
+        } 
+    } catch(err){
+        res.status(500).json({error: 'Failed to login'})
+    }
+}
