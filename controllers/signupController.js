@@ -71,3 +71,18 @@ exports.loginCredentials = async (req,res,next) => {
         res.status(500).json({error: 'Failed to login'})
     }
 }
+
+exports.findnewUsers = async (req,res,next) =>{
+    let newusers = await Signup.findAll();
+    console.log("newusers=====>",newusers)
+    try{
+        if(newusers){
+            res.status(200).json({message:'New Users fetched',users:newusers})
+        } else {
+            res.status(404).json({message:"Unable to fetch users"})
+        }
+    } catch(err) {
+        res.status(500).json({error:"Server failed to fetch data"})
+    }
+    
+}
