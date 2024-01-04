@@ -1,17 +1,24 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/signupModel');
 
-const authentication = (req,res,next) => {
+const authentication = async (req, res, next) => {
     try {
+        console.log("jwt 1");
         const token = req.header('Authorization');
-        const user = jwt.verify(token,'shreyassrikanth');
-        User.findByPk(user.userId).then(res =>{
+        const user = jwt.verify(token, 'shreyassrikanth');
+        const foundUser = await User.findByPk(user.userId);
+
+        if (foundUser) {
             req.user = user;
-            next();
-        })
-    } catch(err) {
+            console.log("jwt 2");
+            return next(); // Move to the next middleware/route handler
+        } else {
+            console.log("User not found");
+            return res.status(404).json({ success: false });
+        }
+    } catch (err) {
         console.log(err);
-        return res.status(404).json({success:false})
+        return res.status(500).json({ success: false, error: "Authentication failed" });
     }
 }
 

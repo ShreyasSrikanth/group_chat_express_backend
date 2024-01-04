@@ -4,6 +4,7 @@ const express = require('express');
 const fs = require('fs')
 
 const userModel = require('./models/signupModel');
+const messageModel = require("./models/messageModel");
 
 const app = express();
 const helmet = require('helmet');
@@ -11,7 +12,9 @@ const morgan = require('morgan');
 
 const sequelize = require('./util/database');
 const bodyParser = require('body-parser');
+
 const signupRoute = require('./routes/signUpRoute');
+const messageRoute = require('./routes/messageRoute');
 
 
 const accessLogStream = fs.createWriteStream(
@@ -25,7 +28,10 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.json());
 app.use('/users',signupRoute);
+app.use('/message',messageRoute);
 
+userModel.hasMany(messageModel);
+messageModel.belongsTo(userModel);
 
 sequelize.sync()
   .then(res => {

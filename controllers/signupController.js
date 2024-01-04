@@ -74,7 +74,6 @@ exports.loginCredentials = async (req,res,next) => {
 
 exports.findnewUsers = async (req,res,next) =>{
     let newusers = await Signup.findAll();
-    console.log("newusers=====>",newusers)
     try{
         if(newusers){
             res.status(200).json({message:'New Users fetched',users:newusers})
