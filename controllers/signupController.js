@@ -74,9 +74,10 @@ exports.loginCredentials = async (req,res,next) => {
 
 exports.findnewUsers = async (req,res,next) =>{
     let newusers = await Signup.findAll();
+    const userCount = await Signup.count();
     try{
         if(newusers){
-            res.status(200).json({message:'New Users fetched',users:newusers})
+            res.status(200).json({message:'New Users fetched',users:newusers,userCount:userCount})
         } else {
             res.status(404).json({message:"Unable to fetch users"})
         }

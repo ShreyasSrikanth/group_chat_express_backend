@@ -7,9 +7,9 @@ exports.postMessages = async(req,res,next) =>{
     const t = await database.transaction();
     let usermessage = req.body.message;
 
-    console.log(req.user.userId)
+    
 
-    await User.findOne({where:{id:1}})
+    await User.findOne({where:{id:req.user.userId}})
     .then(async(user) => {
         await Message.create({
             message: usermessage,
@@ -31,3 +31,13 @@ exports.postMessages = async(req,res,next) =>{
         return res.status(500).json({error:"User doesn't exits"});
     })
 };
+
+exports.getMessages = async(req,res,next) =>{
+    let users = await User.findAll();
+    console.log(req.user.userId)
+
+    if(users){
+        let messages = await Message.findAll();
+        res.status(200).json({message:messages,user:users,currentUserId:req.user.userId})
+    }
+}

@@ -6,6 +6,7 @@ const messageController = require('../controllers/messageController');
 const authUser = require('../middlewear/auth');
 
 Router.post('/storechat',authUser.authentication,messageController.postMessages);
+Router.get('/getmessages',authUser.authentication,messageController.getMessages);
 
 
 module.exports = Router;

@@ -8,6 +8,8 @@ const authentication = async (req, res, next) => {
         const user = jwt.verify(token, 'shreyassrikanth');
         const foundUser = await User.findByPk(user.userId);
 
+        console.log("=====>",user)
+
         if (foundUser) {
             req.user = user;
             console.log("jwt 2");
