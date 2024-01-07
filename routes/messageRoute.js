@@ -7,6 +7,7 @@ const authUser = require('../middlewear/auth');
 
 Router.post('/storechat',authUser.authentication,messageController.postMessages);
 Router.get('/getmessages',authUser.authentication,messageController.getMessages);
+Router.get('/getNewMessage',authUser.authentication,messageController.getNewMessages);
 
 
 module.exports = Router;

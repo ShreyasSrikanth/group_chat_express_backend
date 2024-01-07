@@ -34,10 +34,29 @@ exports.postMessages = async(req,res,next) =>{
 
 exports.getMessages = async(req,res,next) =>{
     let users = await User.findAll();
-    console.log(req.user.userId)
 
     if(users){
         let messages = await Message.findAll();
         res.status(200).json({message:messages,user:users,currentUserId:req.user.userId})
     }
 }
+
+exports.getNewMessages = async (req, res, next) => {
+    try {
+        let users = await User.findAll();
+
+        const lastTenMessages = await Message.findAll({
+            order: [['createdAt', 'DESC']],
+            limit: 10
+        });
+
+        if (lastTenMessages && lastTenMessages.length > 0) {
+            res.status(200).json({ newMessage:lastTenMessages,user:users, currentUserId: req.user.userId });
+        } else {
+            res.status(404).json({ message: 'No messages found.' });
+        }
+    } catch (error) {
+        console.error("Error fetching last 10 messages:", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
