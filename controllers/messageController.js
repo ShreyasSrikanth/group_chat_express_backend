@@ -7,8 +7,6 @@ exports.postMessages = async(req,res,next) =>{
     const t = await database.transaction();
     let usermessage = req.body.message;
 
-    
-
     await User.findOne({where:{id:req.user.userId}})
     .then(async(user) => {
         await Message.create({
