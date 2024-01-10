@@ -7,6 +7,7 @@ const userModel = require('./models/signupModel');
 const messageModel = require("./models/messageModel");
 const groupModel = require("./models/groupModel");
 const groupmessagesModel = require('./models/groupMessageModel'); 
+const groupAdminModel = require('./models/groupAdminModel'); 
 
 const app = express();
 const helmet = require('helmet');
@@ -19,6 +20,7 @@ const signupRoute = require('./routes/signUpRoute');
 const messageRoute = require('./routes/messageRoute');
 const groupRoute = require('./routes/groupRoute');
 const groupmessageRoute = require('./routes/groupmessageRoute');
+const groupAdminRoute = require('./routes/groupAdminRoute');
 
 const accessLogStream = fs.createWriteStream(
     path.join(__dirname,'access.log'),
@@ -33,6 +35,7 @@ app.use('/users',signupRoute);
 app.use('/message',messageRoute);
 app.use('/groups',groupRoute);
 app.use('/groupmessageRoute',groupmessageRoute);
+app.use('/groupAdminRoute',groupAdminRoute);
 
 userModel.hasMany(messageModel);
 messageModel.belongsTo(userModel);
@@ -45,6 +48,9 @@ groupmessagesModel.belongsTo(userModel);
 
 groupModel.hasMany(groupmessagesModel);
 groupmessagesModel.belongsTo(groupModel);
+
+groupModel.hasMany(groupAdminModel);
+groupAdminModel.belongsTo(groupModel);
 
 sequelize.sync()
   .then(res => {
