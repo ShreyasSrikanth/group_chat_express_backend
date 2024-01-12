@@ -216,12 +216,10 @@ async function inviteUsers(){
     
         console.log("invite",response)
     
-        if(response.status===200){
-            alert(response.data.message)
-            console.log(response.data.newGroup)
-        }  else {
+        if(response){
+                console.log(response.data)
                 console.log("Not an admin")
-                alert("Not an admin")
+                alert(response.data.message)
         }
     }
 
