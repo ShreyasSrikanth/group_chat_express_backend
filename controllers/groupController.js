@@ -85,28 +85,39 @@ async function removeGroupUser(req,res,next){
         let userId = req.body.userId;
         let groupadminId = req.body.groupadminId;
         let groupId = req.body.groupId;
+        let adminId = req.user.userId
+
+        groupAdminModel.findAll({where:{
+
+        }})
     
         const groupModelVar = await groupAdminModel.findAll({
             where: {
-                groupadminId: groupadminId,
-                groupId: groupId
+                groupadminId: adminId,
+                groupId:groupId
             }
         });
+
+        if(groupModelVar){
+            if (groupModelVar.length > 0) {
+                const groupInstance = await groupModel.findByPk(groupId);
+                const userInstance = await userModel.findByPk(userId);
     
-        if (groupModelVar.length > 0) {
-            const groupInstance = await groupModel.findByPk(groupId);
-            const userInstance = await userModel.findByPk(userId);
-
-        if (groupInstance && userInstance) {
-            await groupInstance.removeUsers(userInstance);
-            res.status(200).json({ message: "User removed successfully" });
+            if (groupInstance && userInstance) {
+                await groupInstance.removeUsers(userInstance);
+                res.status(200).json({ message: "User removed successfully" });
+            } else {
+                res.status(404).json({ message: "Group or user not found" });
+            }
+    
+            } else {
+                res.status(404).json({ message: "Not an admin" });
+            }
         } else {
-            res.status(404).json({ message: "Group or user not found" });
+            res.status(404).json({ message: "Not an admin" });
         }
-
-        } else {
-            res.status(404).json({ message: "Group not found" });
-        }
+    
+       
     } catch (err) {
         console.error("Error removing user from group:", err);
         res.status(500).json({ message: "Internal server error" });

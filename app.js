@@ -52,6 +52,18 @@ groupmessagesModel.belongsTo(groupModel);
 groupModel.hasMany(groupAdminModel);
 groupAdminModel.belongsTo(groupModel);
 
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+  res.redirect('/Login/login.html');
+});
+
+
+app.get('/:dynamicRoute', (req, res) => {
+  const dynamicRoute = req.params.dynamicRoute;
+  res.send(`Dynamic Route: ${dynamicRoute}`);
+});
+
 sequelize.sync()
   .then(res => {
     app.listen(3000);
