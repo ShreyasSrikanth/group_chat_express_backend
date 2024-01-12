@@ -40,8 +40,8 @@ app.use('/groupAdminRoute',groupAdminRoute);
 userModel.hasMany(messageModel);
 messageModel.belongsTo(userModel);
 
-userModel.belongsToMany(groupModel, { through: 'UserGroup' });
-groupModel.belongsToMany(userModel, { through: 'UserGroup' });
+userModel.belongsToMany(groupModel, { through: 'usergroups' });
+groupModel.belongsToMany(userModel, { through: 'usergroups' });
 
 userModel.hasMany(groupmessagesModel);
 groupmessagesModel.belongsTo(userModel);

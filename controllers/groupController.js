@@ -1,6 +1,7 @@
 const userModel = require('../models/signupModel');
 const groupModel = require('../models/groupModel');
-const groupAdminModel = require('../models/groupAdminModel')
+const groupAdminModel = require('../models/groupAdminModel');
+const usergroupModel = require('../models/usergroupModel');
 
 const database = require('../util/database');
 const usergroups = require('../models/groupModel');
@@ -110,15 +111,71 @@ async function removeGroupUser(req,res,next){
         console.error("Error removing user from group:", err);
         res.status(500).json({ message: "Internal server error" });
     }
-    
-
-
 }
+
+const { Op } = require('sequelize'); // Import Sequelize's Op for operators
+
+async function fetchInviteUsers(req, res, next) {
+    try {
+        let groupId = req.query.groupId;
+        console.log(groupId);
+
+        // Fetch all UserGroup records for the specified group
+        const userGroupRecords = await usergroupModel.findAll({
+            where: { groupId },
+            attributes: ['UserId'],
+        });
+
+        // Extract user IDs from the UserGroup records
+        const userIdsInGroup = userGroupRecords.map(record => record.UserId);
+
+        // Find all users whose IDs are NOT in the userIdsInGroup array
+        const usersNotInGroup = await userModel.findAll({
+            where: {
+                id: {
+                    [Op.notIn]: userIdsInGroup,
+                },
+            },
+        });
+
+        res.status(201).json({ message: 'User added to the group successfully', users:usersNotInGroup });
+    } catch (error) {
+        next(error); // Pass the error to the error handling middleware
+    }
+}
+
+
+async function addUserToGroup(req, res, next) {
+    try {
+        let groupId = req.body.groupId;
+        let groupUsers = req.body.groupUsers;  //array of userIds
+        
+        const newUserGroupRecords = await Promise.all(
+            groupUsers.map(async (userId) => {
+                return await usergroupModel.create({
+                    UserId: userId,
+                    groupId: groupId,
+                    
+                });
+            })
+        );
+
+        console.log('Users added to group successfully:', newUserGroupRecords);
+
+        res.status(201).json({ message: 'User added to the group successfully', users:newUserGroupRecords });
+    } catch (error) {
+        next(error); // Pass the error to the error handling middleware
+    }
+}
+
+
 
 
 module.exports={
     createGroups,
     fetchGroups,
     fetchGroupUsers,
-    removeGroupUser
+    removeGroupUser,
+    fetchInviteUsers,
+    addUserToGroup
 }

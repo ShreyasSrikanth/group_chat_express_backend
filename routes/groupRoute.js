@@ -9,5 +9,7 @@ Router.post('/createGroups',authUser.authentication,groupController.createGroups
 Router.get('/fetchgroups',authUser.authentication,groupController.fetchGroups);
 Router.get('/fetchgroupUsers',groupController.fetchGroupUsers);
 Router.post('/removegroupuser',authUser.authentication,groupController.removeGroupUser)
+Router.get('/fetchNewUsers',groupController.fetchInviteUsers);
+Router.post('/addUserToGroup',authUser.authentication,groupController.addUserToGroup)
 
 module.exports = Router;
