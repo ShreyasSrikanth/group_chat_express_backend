@@ -97,7 +97,7 @@ async function fetchNewUsersForGroup() {
         let token = localStorage.getItem('token');
         let groupId = chatgroupusers[0].usergroups.groupId;
         console.log(typeof groupId)
-        let response = await axios.get(`http://localhost:3000/groups/fetchNewUsers?groupId=${groupId}`)
+        let response = await axios.get(`http://52.90.191.116:3000/groups/fetchNewUsers?groupId=${groupId}`)
         console.log(response)
         // localStorage.setItem("userCount", response.data.userCount)
         return response
@@ -179,7 +179,7 @@ async function userGroups(){
     let token = localStorage.getItem("token");
     let groupName = document.getElementById('grpName').value;
 
-    let response = await axios.post(`http://localhost:3000/groups/createGroups`,{
+    let response = await axios.post(`http://52.90.191.116:3000/groups/createGroups`,{
         groupName:groupName,
         groupUsers:groups
     },{
@@ -205,7 +205,7 @@ async function inviteUsers(){
     
         let groupId = chatgroupusers[0].usergroups.groupId;
         console.log("else")
-        let response = await axios.post(`http://localhost:3000/groups/addUserToGroup`,{
+        let response = await axios.post(`http://52.90.191.116:3000/groups/addUserToGroup`,{
                 groupId:groupId,
                 groupUsers:invite
         },{
@@ -229,7 +229,7 @@ async function inviteUsers(){
 
 async function fetchUserGroup() {
     let token = localStorage.getItem("token");
-    let response = await axios.get(`http://localhost:3000/groups/fetchgroups`, {
+    let response = await axios.get(`http://52.90.191.116:3000/groups/fetchgroups`, {
         headers: {
             'Authorization': token
         }
@@ -268,7 +268,7 @@ async function displayGroupUsers(groupName, groupId){
     
         let token = localStorage.getItem("token");
     
-        let response = await axios.get(`http://localhost:3000/groups/fetchgroupUsers?groupId=${groupId}`, {
+        let response = await axios.get(`http://52.90.191.116:3000/groups/fetchgroupUsers?groupId=${groupId}`, {
             headers: {
                 'Authorization': token
             }
@@ -298,7 +298,7 @@ async function storeGroupMessages(){
         let token = localStorage.getItem("token");
         let groupId = chatgroupusers[0].usergroups.groupId;
         
-        let response = await axios.post(`http://localhost:3000/groupmessageRoute/fetchgroupUsers`, {
+        let response = await axios.post(`http://52.90.191.116:3000/groupmessageRoute/fetchgroupUsers`, {
                 message: text,
                 groupId:groupId
         },{
@@ -320,7 +320,7 @@ async function storeMessagestoBackend() {
                 alert("No users to send messages")
         } else {
 
-        let response = await axios.post(`http://localhost:3000/message/storechat`, {
+        let response = await axios.post(`http://52.90.191.116:3000/message/storechat`, {
                 message: text
         }, {
                 headers: {
@@ -418,7 +418,7 @@ textField.addEventListener('click', function() {
 
 async function fetchUsers() {
     let token = localStorage.getItem('token');
-    let response = await axios.get("http://localhost:3000/users/fetchusers",{
+    let response = await axios.get("http://52.90.191.116:3000/users/fetchusers",{
         headers: {
                         'Authorization': token
         }
@@ -470,7 +470,7 @@ async function displayUsers() {
                                 let removeButton = document.createElement('button');
                                 removeButton.textContent = 'Remove';
                                 removeButton.addEventListener('click', async () => {
-                                        let response = await axios.post(`http://localhost:3000/groups/removegroupuser`, {
+                                        let response = await axios.post(`http://52.90.191.116:3000/groups/removegroupuser`, {
                                                 userId:user.id,
                                                 groupadminId:groupAdmin,
                                                 groupId:groupId
@@ -538,7 +538,7 @@ async function getAllGroupMessagesfromBackend() {
                 let token = localStorage.getItem("token");
                 let groupId = chatgroupusers[0].usergroups.groupId;
 
-                let response = await axios.get(`http://localhost:3000/groupmessageRoute/fetchallgroupmessages?groupId=${groupId}`, {
+                let response = await axios.get(`http://52.90.191.116:3000/groupmessageRoute/fetchallgroupmessages?groupId=${groupId}`, {
                         headers: {
                                 'Authorization': token
                         }
@@ -559,7 +559,7 @@ async function appendGroupMessage() {
         let token = localStorage.getItem("token");
         let groupId = chatgroupusers[0].usergroups.groupId;
 
-        let response = await axios.get(`http://localhost:3000/groupmessageRoute/fetchgroupmessages?groupId=${groupId}`, {
+        let response = await axios.get(`http://52.90.191.116:3000/groupmessageRoute/fetchgroupmessages?groupId=${groupId}`, {
                 headers: {
                         'Authorization': token
                 }
@@ -573,7 +573,7 @@ async function appendGroupMessage() {
 async function getMessagesfromBackend() {
         try {
                 let token = localStorage.getItem("token");
-                let response = await axios.get(`http://localhost:3000/message/getmessages`, {
+                let response = await axios.get(`http://52.90.191.116:3000/message/getmessages`, {
                         headers: {
                                 'Authorization': token
                         }
@@ -591,7 +591,7 @@ async function getMessagesfromBackend() {
 
 async function appendNewMessage() {
         let token = localStorage.getItem("token");
-        let response = await axios.get(`http://localhost:3000/message/getNewMessage`, {
+        let response = await axios.get(`http://52.90.191.116:3000/message/getNewMessage`, {
                 headers: {
                         'Authorization': token
                 }
