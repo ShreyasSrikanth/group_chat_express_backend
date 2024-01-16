@@ -45,8 +45,10 @@ exports.getNewMessages = async (req, res, next) => {
 
         const lastTenMessages = await Message.findAll({
             order: [['createdAt', 'DESC']],
-            limit: 10
+            limit: 11
         });
+
+        console.log(lastTenMessages)
 
         if (lastTenMessages && lastTenMessages.length > 0) {
             res.status(200).json({ newMessage:lastTenMessages,user:users, currentUserId: req.user.userId });

@@ -1,3 +1,5 @@
+// import {io} from 'socket.io-client'
+
 let chats = document.getElementById('chats');
 let chatButton = document.getElementById("ChatButton");
 let chatDisplay = document.getElementById("chatText");
@@ -33,6 +35,16 @@ let normalchats = true;
 let groupAdmin;
 
 let inviteUserButton = document.getElementById('invite');
+
+const socket = io('http://localhost:3000')
+socket.on("connection", ()=>{
+        // displayUsers()
+        // getMessagesfromBackend()
+        console.log("wassup2")
+})
+
+
+
 
 inviteUserButton.addEventListener('click',inviteNewUsers)
 
@@ -97,7 +109,7 @@ async function fetchNewUsersForGroup() {
         let token = localStorage.getItem('token');
         let groupId = chatgroupusers[0].usergroups.groupId;
         console.log(typeof groupId)
-        let response = await axios.get(`http://52.90.191.116:3000/groups/fetchNewUsers?groupId=${groupId}`)
+        let response = await axios.get(`http://localhost:3000/groups/fetchNewUsers?groupId=${groupId}`)
         console.log(response)
         // localStorage.setItem("userCount", response.data.userCount)
         return response
@@ -179,7 +191,7 @@ async function userGroups(){
     let token = localStorage.getItem("token");
     let groupName = document.getElementById('grpName').value;
 
-    let response = await axios.post(`http://52.90.191.116:3000/groups/createGroups`,{
+    let response = await axios.post(`http://localhost:3000/groups/createGroups`,{
         groupName:groupName,
         groupUsers:groups
     },{
@@ -205,7 +217,7 @@ async function inviteUsers(){
     
         let groupId = chatgroupusers[0].usergroups.groupId;
         console.log("else")
-        let response = await axios.post(`http://52.90.191.116:3000/groups/addUserToGroup`,{
+        let response = await axios.post(`http://localhost:3000/groups/addUserToGroup`,{
                 groupId:groupId,
                 groupUsers:invite
         },{
@@ -229,7 +241,7 @@ async function inviteUsers(){
 
 async function fetchUserGroup() {
     let token = localStorage.getItem("token");
-    let response = await axios.get(`http://52.90.191.116:3000/groups/fetchgroups`, {
+    let response = await axios.get(`http://localhost:3000/groups/fetchgroups`, {
         headers: {
             'Authorization': token
         }
@@ -255,8 +267,8 @@ async function fetchUserGroup() {
 let usergroup
 
 async function displayGroupUsers(groupName, groupId){
-        clearInterval(AllMessage);
-        clearInterval(NewMessage);
+        // clearInterval(AllMessage);
+        // clearInterval(NewMessage);
         chats.innerHTML=""
     
         normalchats = false;
@@ -268,7 +280,7 @@ async function displayGroupUsers(groupName, groupId){
     
         let token = localStorage.getItem("token");
     
-        let response = await axios.get(`http://52.90.191.116:3000/groups/fetchgroupUsers?groupId=${groupId}`, {
+        let response = await axios.get(`http://localhost:3000/groups/fetchgroupUsers?groupId=${groupId}`, {
             headers: {
                 'Authorization': token
             }
@@ -297,8 +309,10 @@ async function storeGroupMessages(){
         let text = document.getElementById('text').value;
         let token = localStorage.getItem("token");
         let groupId = chatgroupusers[0].usergroups.groupId;
+
+        socket.emit("sendGroupMessages",text)
         
-        let response = await axios.post(`http://52.90.191.116:3000/groupmessageRoute/fetchgroupUsers`, {
+        let response = await axios.post(`http://localhost:3000/groupmessageRoute/fetchgroupUsers`, {
                 message: text,
                 groupId:groupId
         },{
@@ -316,11 +330,13 @@ async function storeMessagestoBackend() {
         let token = localStorage.getItem("token");
         let count = localStorage.getItem("userCount");
 
+        socket.emit("send",text)
+
         if (count === "1") {
                 alert("No users to send messages")
         } else {
 
-        let response = await axios.post(`http://52.90.191.116:3000/message/storechat`, {
+        let response = await axios.post(`http://localhost:3000/message/storechat`, {
                 message: text
         }, {
                 headers: {
@@ -336,29 +352,44 @@ async function storeMessagestoBackend() {
 
 loadNewMessage.addEventListener("click", fetchNewMessages);
 
+
+
 async function fetchNewMessages() {
     loadNewMessage.disabled = true;
     loadAllMessage.disabled = false;
-        clearInterval(AllMessage);
-        clearInterval(NewAllGroupMessage)
-        if(normalchats===true){
-                clearInterval(NewGroupMessage);
-                clearInterval(NewMessage);
 
-                appendNewMessage()
+        if(normalchats===true){
+                appendNewMessage();
+
+                socket.on("newmessagestored", async (message) => {
+                        console.log(message);
+                    
+                        // Delay the execution of appendNewMessage by 5 seconds
+                        setTimeout(async () => {
+                            await appendNewMessage();
+                        }, 500);
+                    });
         
-                NewMessage = setInterval(async () => {
-                        appendNewMessage()
-                }, 1000)
+
             } else{
-                clearInterval(NewGroupMessage);
-                clearInterval(NewMessage);
 
                 appendGroupMessage();
-        
-                NewGroupMessage = setInterval(async () => {
-                        appendGroupMessage()
-                }, 1000)
+
+                socket.on("newgroupmessagesstored", async (message) => {
+                        console.log("group",message);
+
+                        await appendGroupMessage();
+                    },500);
+
+                // socket.on("newgroupmessagesstored", async (message) => {
+                //         console.log(message);
+                    
+                //         // Delay the execution of appendNewMessage by 5 seconds
+                //         setTimeout(async () => {
+                            
+                //         }, 500);
+                //     });
+
             }
 }
 
@@ -367,25 +398,30 @@ loadAllMessage.addEventListener("click", fetchAllMessages);
 async function fetchAllMessages() {
     loadNewMessage.disabled = false; 
     loadAllMessage.disabled = true; 
-        clearInterval(NewMessage);
-        clearInterval(NewGroupMessage);
        
         if(normalchats===true){
-                clearInterval(AllMessage);
-                clearInterval(NewAllGroupMessage);
 
                 getMessagesfromBackend();
-                AllMessage = setInterval(async () => {
-                        getMessagesfromBackend()
-                }, 1000)
-        } else {
-                clearInterval(AllMessage);
-                clearInterval(NewAllGroupMessage);
 
+                socket.on("newmessagestored", async (message) => {
+                        console.log(message);
+                    
+                        // Delay the execution of appendNewMessage by 5 seconds
+                        setTimeout(async () => {
+                            await getMessagesfromBackend();
+                        }, 500);
+                    });
+        } else {
                 getAllGroupMessagesfromBackend();
-                NewAllGroupMessage = setInterval(async () => {
-                        getAllGroupMessagesfromBackend();
-                }, 1000)
+
+                socket.on("newgroupmessagesstored", async (message) => {
+                        console.log(message);
+                    
+                        // Delay the execution of appendNewMessage by 5 seconds
+                        setTimeout(async () => {
+                            await getAllGroupMessagesfromBackend();
+                        }, 500);
+                    });
         }
 }
 
@@ -408,8 +444,6 @@ textField.addEventListener('click', function() {
         console.log('F',normalchats)
         inviteUserButton.style.display = 'none';
      }
-    clearInterval(NewGroupMessage);
-    clearInterval(NewMessage);
     displayUsers();
 });
 
@@ -418,7 +452,7 @@ textField.addEventListener('click', function() {
 
 async function fetchUsers() {
     let token = localStorage.getItem('token');
-    let response = await axios.get("http://52.90.191.116:3000/users/fetchusers",{
+    let response = await axios.get("http://localhost:3000/users/fetchusers",{
         headers: {
                         'Authorization': token
         }
@@ -470,7 +504,7 @@ async function displayUsers() {
                                 let removeButton = document.createElement('button');
                                 removeButton.textContent = 'Remove';
                                 removeButton.addEventListener('click', async () => {
-                                        let response = await axios.post(`http://52.90.191.116:3000/groups/removegroupuser`, {
+                                        let response = await axios.post(`http://localhost:3000/groups/removegroupuser`, {
                                                 userId:user.id,
                                                 groupadminId:groupAdmin,
                                                 groupId:groupId
@@ -513,20 +547,27 @@ async function displayUsers() {
         });
         
     if(normalchats===true){
-        clearInterval(NewGroupMessage);
         appendNewMessage()
 
-        NewMessage = setInterval(async () => {
-                appendNewMessage()
-        }, 1000)
+        socket.on("newmessagestored", async (message) => {
+                console.log(message);
+            
+                // Delay the execution of appendNewMessage by 5 seconds
+                setTimeout(async () => {
+                    await appendNewMessage();
+                }, 500);
+            });
     } else{
-        clearInterval(NewGroupMessage);
-        clearInterval(NewMessage);
         appendGroupMessage()
+        socket.on("newgroupmessagesstored", async (message) => {
+                console.log(message);
+            
+                // Delay the execution of appendNewMessage by 5 seconds
+                setTimeout(async () => {
+                    await appendGroupMessage();
+                }, 500);
+            });
 
-        NewGroupMessage = setInterval(async () => {
-                appendGroupMessage()
-        }, 1000)
     }
         
 }
@@ -538,7 +579,7 @@ async function getAllGroupMessagesfromBackend() {
                 let token = localStorage.getItem("token");
                 let groupId = chatgroupusers[0].usergroups.groupId;
 
-                let response = await axios.get(`http://52.90.191.116:3000/groupmessageRoute/fetchallgroupmessages?groupId=${groupId}`, {
+                let response = await axios.get(`http://localhost:3000/groupmessageRoute/fetchallgroupmessages?groupId=${groupId}`, {
                         headers: {
                                 'Authorization': token
                         }
@@ -555,15 +596,17 @@ async function getAllGroupMessagesfromBackend() {
 
 
 async function appendGroupMessage() {
+        console.log("group")
 
         let token = localStorage.getItem("token");
         let groupId = chatgroupusers[0].usergroups.groupId;
 
-        let response = await axios.get(`http://52.90.191.116:3000/groupmessageRoute/fetchgroupmessages?groupId=${groupId}`, {
+        let response = await axios.get(`http://localhost:3000/groupmessageRoute/fetchgroupmessages?groupId=${groupId}`, {
                 headers: {
                         'Authorization': token
                 }
         });
+
 
         localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
         displayLastTenMessages(response);
@@ -572,8 +615,9 @@ async function appendGroupMessage() {
 
 async function getMessagesfromBackend() {
         try {
+                console.log("hello")
                 let token = localStorage.getItem("token");
-                let response = await axios.get(`http://52.90.191.116:3000/message/getmessages`, {
+                let response = await axios.get(`http://localhost:3000/message/getmessages`, {
                         headers: {
                                 'Authorization': token
                         }
@@ -590,12 +634,15 @@ async function getMessagesfromBackend() {
 }
 
 async function appendNewMessage() {
+        console.log("hkhjkjk")
         let token = localStorage.getItem("token");
-        let response = await axios.get(`http://52.90.191.116:3000/message/getNewMessage`, {
+        let response = await axios.get(`http://localhost:3000/message/getNewMessage`, {
                 headers: {
                         'Authorization': token
                 }
         });
+
+        console.log(response)
 
         localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
         displayLastTenMessages(response);

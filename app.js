@@ -1,7 +1,8 @@
 const path = require('path');
 const cors = require('cors');
 const express = require('express');
-const fs = require('fs')
+const fs = require('fs');
+const http = require('http'); // Add this line
 
 const userModel = require('./models/signupModel');
 const messageModel = require("./models/messageModel");
@@ -10,6 +11,9 @@ const groupmessagesModel = require('./models/groupMessageModel');
 const groupAdminModel = require('./models/groupAdminModel'); 
 
 const app = express();
+const server = http.createServer(app); // Create an HTTP server
+const io = require('socket.io')(server); // Attach socket.io to the server
+
 const helmet = require('helmet');
 const morgan = require('morgan');
 
@@ -25,10 +29,9 @@ const groupAdminRoute = require('./routes/groupAdminRoute');
 const accessLogStream = fs.createWriteStream(
     path.join(__dirname,'access.log'),
     {flags:'a'}
-  );
+);
 
-app.use(cors());
-
+// app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.json());
 app.use('/users',signupRoute);
@@ -58,15 +61,34 @@ app.get('/', (req, res) => {
   res.redirect('/Login/login.html');
 });
 
-
 app.get('/:dynamicRoute', (req, res) => {
   const dynamicRoute = req.params.dynamicRoute;
   res.send(`Dynamic Route: ${dynamicRoute}`);
 });
 
+io.on("connection", socket => {
+  console.log(socket.id);
+  socket.on("send",(message)=>{
+    io.emit('newmessagestored',message)
+  })
+
+  socket.on("sendGroupMessages",(message)=>{
+
+    console.log(message)
+    io.emit('newgroupmessagesstored',message)
+  })
+});
+
+io.on("connection2", socket => {
+  console.log(socket.id);
+  
+});
+
 sequelize.sync()
   .then(res => {
-    app.listen(3000);
+    server.listen(3000, () => {
+      console.log('Server running on http://localhost:3000');
+    });
   })
   .catch(err => {
     console.log(err);
