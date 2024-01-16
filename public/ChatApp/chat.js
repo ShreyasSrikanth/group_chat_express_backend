@@ -39,7 +39,7 @@ let inviteUserButton = document.getElementById('invite');
 
 const socket = io('http://localhost:3000')
 socket.on("connect", ()=>{
-        alert("Connection succesfully established")
+        console.log("Connection succesfully established")
 })
 
 
