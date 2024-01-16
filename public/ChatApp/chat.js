@@ -33,12 +33,13 @@ let invite = [];
 let chatgroupusers;
 let normalchats = true;
 let groupAdmin;
+let usergroup;
 
 let inviteUserButton = document.getElementById('invite');
 
 const socket = io('http://localhost:3000')
-socket.on("connection", ()=>{
-        console.log("Connection succesfully established")
+socket.on("connect", ()=>{
+        alert("Connection succesfully established")
 })
 
 
@@ -108,7 +109,7 @@ async function fetchNewUsersForGroup() {
         
         let response = await axios.get(`http://localhost:3000/groups/fetchNewUsers?groupId=${groupId}`)
         return response
-    }
+}
 
 
 if (normalchats === true) {
@@ -232,8 +233,6 @@ async function inviteUsers(){
         
     }
 
-// GroupChats.addEventListener('click',displaygroupMessages);
-
 
 
 async function fetchUserGroup() {
@@ -264,7 +263,7 @@ async function fetchUserGroup() {
     groupUserIds = response.data.groups;
 }
 
-let usergroup
+
 
 async function displayGroupUsers(groupName, groupId){
         chats.innerHTML=""    
@@ -443,10 +442,8 @@ async function displayUsers() {
         } else {
             newUsers = response2
         }
-
         
         let groupUsers = response2;
-
         let ul = document.createElement('ul');
 
         newUsers.forEach(async (user, index) => {
@@ -672,10 +669,9 @@ function displayLastTenMessages(response) {
 }
 
 displayUsers();
-fetchUserGroup();
 
+fetchUserGroup();
 socket.on('groupcreated',async(groupName)=>{
-        console.log(groupName)
         setTimeout(async () => {
                 await fetchUserGroup();
             }, 1000);
