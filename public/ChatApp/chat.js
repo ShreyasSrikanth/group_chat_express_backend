@@ -38,12 +38,13 @@ let usergroup;
 let inviteUserButton = document.getElementById('invite');
 
 const socket = io('http://localhost:3000')
-socket.on("connect", ()=>{
-        console.log("Connection succesfully established")
+socket.on("connect", (socket)=>{
+    const message = document.createElement("p");
+    message.textContent = `Connection successfully established`;
+    message.style.textAlign="center";
+    message.style.backgroundColor="burlywood"
+    chats.appendChild(message);
 })
-
-
-
 
 inviteUserButton.addEventListener('click',inviteNewUsers)
 
@@ -181,7 +182,6 @@ groupMembers.forEach((user) => {
 }
 
 sendgrpInfo.addEventListener('click',userGroups)
-
 async function userGroups(){
     let token = localStorage.getItem("token");
     let groupName = document.getElementById('grpName').value;
