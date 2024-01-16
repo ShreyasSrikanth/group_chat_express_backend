@@ -10,9 +10,6 @@ async function createGroups(req, res, next) {
     const t = await database.transaction();
 
     try {
-        console.log(req.body.groupName);
-        console.log(req.user.userId);
-
         const newGroup = await groupModel.create({
             groupname: req.body.groupName,
             groupadminId: req.user.userId
@@ -124,23 +121,18 @@ async function removeGroupUser(req,res,next){
     }
 }
 
-const { Op } = require('sequelize'); // Import Sequelize's Op for operators
+const { Op } = require('sequelize'); 
 
 async function fetchInviteUsers(req, res, next) {
     try {
         let groupId = req.query.groupId;
-        console.log(groupId);
 
-        // Fetch all UserGroup records for the specified group
         const userGroupRecords = await usergroupModel.findAll({
             where: { groupId },
             attributes: ['UserId'],
         });
 
-        // Extract user IDs from the UserGroup records
         const userIdsInGroup = userGroupRecords.map(record => record.UserId);
-
-        // Find all users whose IDs are NOT in the userIdsInGroup array
         const usersNotInGroup = await userModel.findAll({
             where: {
                 id: {
@@ -151,7 +143,7 @@ async function fetchInviteUsers(req, res, next) {
 
         res.status(201).json({ message: 'User added to the group successfully', users:usersNotInGroup });
     } catch (error) {
-        next(error); // Pass the error to the error handling middleware
+        next(error); 
     }
 }
 
@@ -159,7 +151,7 @@ async function fetchInviteUsers(req, res, next) {
 async function addUserToGroup(req, res, next) {
     try {
         let groupId = req.body.groupId;
-        let groupUsers = req.body.groupUsers;  //array of userIds
+        let groupUsers = req.body.groupUsers;  
         
         const newUserGroupRecords = await Promise.all(
             groupUsers.map(async (userId) => {
@@ -170,8 +162,6 @@ async function addUserToGroup(req, res, next) {
                 });
             })
         );
-
-        console.log('Users added to group successfully:', newUserGroupRecords);
 
         res.status(201).json({ message: 'User added to the group successfully', users:newUserGroupRecords });
     } catch (error) {

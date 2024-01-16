@@ -28,7 +28,6 @@ async function userAuthentication(e) {
             alert("Login succesful")
             localStorage.setItem("token",res.data.token)
             window.location.href = "../ChatApp/chat.html";
-            console.log("res===>",res)
         })
 
     } catch (err) {

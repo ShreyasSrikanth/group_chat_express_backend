@@ -67,22 +67,15 @@ app.get('/:dynamicRoute', (req, res) => {
 });
 
 io.on("connection", socket => {
-  console.log(socket.id);
   socket.on("send",(message)=>{
     io.emit('newmessagestored',message)
   })
 
   socket.on("sendGroupMessages",(message)=>{
-
-    console.log(message)
     io.emit('newgroupmessagesstored',message)
   })
 });
 
-io.on("connection2", socket => {
-  console.log(socket.id);
-  
-});
 
 sequelize.sync()
   .then(res => {

@@ -183,18 +183,24 @@ async function userGroups(){
     let token = localStorage.getItem("token");
     let groupName = document.getElementById('grpName').value;
 
-    let response = await axios.post(`http://localhost:3000/groups/createGroups`,{
-        groupName:groupName,
-        groupUsers:groups
-    },{
-        headers:{
-            'Authorization':token
-        }
-    })
+    console.log(groupName)
 
-
-    if(response.status===200){
-        alert(response.data.message)
+    if(groupName===""){
+        alert("Please Enter Group Name")
+    } else {
+        let response = await axios.post(`http://localhost:3000/groups/createGroups`,{
+                groupName:groupName,
+                groupUsers:groups
+            },{
+                headers:{
+                    'Authorization':token
+                }
+            })
+        
+        
+            if(response.status===200){
+                alert(response.data.message)
+            }
     }
 }
 

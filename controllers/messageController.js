@@ -24,7 +24,6 @@ exports.postMessages = async(req,res,next) =>{
         })
     })
     .catch(async(err) => {
-        console.log("hello")
         await t.rollback();
         return res.status(500).json({error:"User doesn't exits"});
     })
@@ -48,15 +47,12 @@ exports.getNewMessages = async (req, res, next) => {
             limit: 11
         });
 
-        console.log(lastTenMessages)
-
         if (lastTenMessages && lastTenMessages.length > 0) {
             res.status(200).json({ newMessage:lastTenMessages,user:users, currentUserId: req.user.userId });
         } else {
             res.status(404).json({ message: 'No messages found.' });
         }
     } catch (error) {
-        console.error("Error fetching last 10 messages:", error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
