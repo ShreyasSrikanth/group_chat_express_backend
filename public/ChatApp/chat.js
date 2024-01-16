@@ -38,9 +38,7 @@ let inviteUserButton = document.getElementById('invite');
 
 const socket = io('http://localhost:3000')
 socket.on("connection", ()=>{
-        // displayUsers()
-        // getMessagesfromBackend()
-        console.log("wassup2")
+        console.log("Connection succesfully established")
 })
 
 
@@ -82,7 +80,6 @@ async function inviteNewUsers(e){
             }
             isBackgroundGreen = !isBackgroundGreen;
         });
-        console.log(invite)
         
         li2.style.display = "flex";
         li2.style.justifyContent = "space-between";
@@ -108,16 +105,13 @@ async function inviteNewUsers(e){
 async function fetchNewUsersForGroup() {
         let token = localStorage.getItem('token');
         let groupId = chatgroupusers[0].usergroups.groupId;
-        console.log(typeof groupId)
+        
         let response = await axios.get(`http://localhost:3000/groups/fetchNewUsers?groupId=${groupId}`)
-        console.log(response)
-        // localStorage.setItem("userCount", response.data.userCount)
         return response
     }
 
 
 if (normalchats === true) {
-        console.log('F',normalchats)
         inviteUserButton.style.display = 'none';
 } 
 
@@ -130,7 +124,6 @@ async function createGroups(event) {
     let response = await fetchUsers();
     let groupMembers = response.data.users;
 
-    console.log("currentuser",response.data.currentuser)
 
     let ul = document.createElement('ul');     
 
@@ -161,7 +154,6 @@ groupMembers.forEach((user) => {
                     isBackgroundGreen = !isBackgroundGreen;
                 });
                 
-                console.log(groups)
                 li.style.display = "flex";
                 li.style.justifyContent = "space-between";
                 li.style.width = "100%";
@@ -200,11 +192,9 @@ async function userGroups(){
         }
     })
 
-    console.log("if")
 
     if(response.status===200){
         alert(response.data.message)
-        console.log(response.data.newGroup)
     }
 }
 
@@ -216,7 +206,6 @@ async function inviteUsers(){
         let groupName = document.getElementById('grpName').value;
     
         let groupId = chatgroupusers[0].usergroups.groupId;
-        console.log("else")
         let response = await axios.post(`http://localhost:3000/groups/addUserToGroup`,{
                 groupId:groupId,
                 groupUsers:invite
@@ -226,13 +215,12 @@ async function inviteUsers(){
                 }
         })
     
-        console.log("invite",response)
     
         if(response){
-                console.log(response.data)
-                console.log("Not an admin")
                 alert(response.data.message)
         }
+
+        await displayGroupUsers(groupName,groupId)
     }
 
 // GroupChats.addEventListener('click',displaygroupMessages);
@@ -240,6 +228,7 @@ async function inviteUsers(){
 
 
 async function fetchUserGroup() {
+        
     let token = localStorage.getItem("token");
     let response = await axios.get(`http://localhost:3000/groups/fetchgroups`, {
         headers: {
@@ -267,14 +256,10 @@ async function fetchUserGroup() {
 let usergroup
 
 async function displayGroupUsers(groupName, groupId){
-        // clearInterval(AllMessage);
-        // clearInterval(NewMessage);
-        chats.innerHTML=""
-    
+        chats.innerHTML=""    
         normalchats = false;
 
         if (normalchats === false) {
-                console.log('F',normalchats)
                 inviteUserButton.style.display = 'block';
         } 
     
@@ -285,8 +270,6 @@ async function displayGroupUsers(groupName, groupId){
                 'Authorization': token
             }
         });
-    
-        // console.log(response.data.groupmembers);
         chatgroupusers = response.data.groupmembers;
         groupAdmin = response.data.groupadminId
     
@@ -362,9 +345,6 @@ async function fetchNewMessages() {
                 appendNewMessage();
 
                 socket.on("newmessagestored", async (message) => {
-                        console.log(message);
-                    
-                        // Delay the execution of appendNewMessage by 5 seconds
                         setTimeout(async () => {
                             await appendNewMessage();
                         }, 500);
@@ -376,20 +356,8 @@ async function fetchNewMessages() {
                 appendGroupMessage();
 
                 socket.on("newgroupmessagesstored", async (message) => {
-                        console.log("group",message);
-
                         await appendGroupMessage();
                     },500);
-
-                // socket.on("newgroupmessagesstored", async (message) => {
-                //         console.log(message);
-                    
-                //         // Delay the execution of appendNewMessage by 5 seconds
-                //         setTimeout(async () => {
-                            
-                //         }, 500);
-                //     });
-
             }
 }
 
@@ -404,9 +372,6 @@ async function fetchAllMessages() {
                 getMessagesfromBackend();
 
                 socket.on("newmessagestored", async (message) => {
-                        console.log(message);
-                    
-                        // Delay the execution of appendNewMessage by 5 seconds
                         setTimeout(async () => {
                             await getMessagesfromBackend();
                         }, 500);
@@ -415,9 +380,6 @@ async function fetchAllMessages() {
                 getAllGroupMessagesfromBackend();
 
                 socket.on("newgroupmessagesstored", async (message) => {
-                        console.log(message);
-                    
-                        // Delay the execution of appendNewMessage by 5 seconds
                         setTimeout(async () => {
                             await getAllGroupMessagesfromBackend();
                         }, 500);
@@ -441,7 +403,6 @@ textField.addEventListener('click', function() {
     chats.innerHTML="";
     normalchats = true;
     if(normalchats===true) {
-        console.log('F',normalchats)
         inviteUserButton.style.display = 'none';
      }
     displayUsers();
@@ -464,7 +425,6 @@ async function fetchUsers() {
 async function displayUsers() {
         let response1 = await fetchUsers();
         let response2 = chatgroupusers;
-        console.log(chatgroupusers)
         let newUsers;
         
         if(normalchats===true){
@@ -500,7 +460,6 @@ async function displayUsers() {
                                 let token = localStorage.getItem('token');
                                 let groupId = chatgroupusers[0].usergroups.groupId;
                                 li.textContent = `${currentUser} joined`;
-                                console.log("groupId",groupId)
                                 let removeButton = document.createElement('button');
                                 removeButton.textContent = 'Remove';
                                 removeButton.addEventListener('click', async () => {
@@ -513,13 +472,12 @@ async function displayUsers() {
                                                         'Authorization': token
                                                 }
                                         })
-                                    console.log('Remove button clicked for user:', response);
 
                                     if(response.status===200){
                                         alert("User succesfully Removed")
-                                        console.log(response.data.newGroup)
+                                        let groupName = document.getElementById('grpName').value;
+                                        await displayGroupUsers(groupName,groupId)
                                     }  else {
-                                            console.log("Not an admin")
                                             alert("Not an admin")
                                     }
                                 });
@@ -550,9 +508,6 @@ async function displayUsers() {
         appendNewMessage()
 
         socket.on("newmessagestored", async (message) => {
-                console.log(message);
-            
-                // Delay the execution of appendNewMessage by 5 seconds
                 setTimeout(async () => {
                     await appendNewMessage();
                 }, 500);
@@ -560,9 +515,6 @@ async function displayUsers() {
     } else{
         appendGroupMessage()
         socket.on("newgroupmessagesstored", async (message) => {
-                console.log(message);
-            
-                // Delay the execution of appendNewMessage by 5 seconds
                 setTimeout(async () => {
                     await appendGroupMessage();
                 }, 500);
@@ -596,8 +548,6 @@ async function getAllGroupMessagesfromBackend() {
 
 
 async function appendGroupMessage() {
-        console.log("group")
-
         let token = localStorage.getItem("token");
         let groupId = chatgroupusers[0].usergroups.groupId;
 
@@ -615,7 +565,6 @@ async function appendGroupMessage() {
 
 async function getMessagesfromBackend() {
         try {
-                console.log("hello")
                 let token = localStorage.getItem("token");
                 let response = await axios.get(`http://localhost:3000/message/getmessages`, {
                         headers: {
@@ -634,16 +583,12 @@ async function getMessagesfromBackend() {
 }
 
 async function appendNewMessage() {
-        console.log("hkhjkjk")
         let token = localStorage.getItem("token");
         let response = await axios.get(`http://localhost:3000/message/getNewMessage`, {
                 headers: {
                         'Authorization': token
                 }
         });
-
-        console.log(response)
-
         localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
         displayLastTenMessages(response);
 }
