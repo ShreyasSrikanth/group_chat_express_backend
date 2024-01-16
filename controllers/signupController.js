@@ -15,7 +15,6 @@ exports.postItem = (req, res, next) => {
     Signup.findOne({ where: { email: email } })
         .then(existingUser => {
             if (existingUser) {
-                console.log("User already exists")
                 return res.status(404).json({ message: 'User already exists' });
             } else {
                 bcrypt.hash(pass, saltround, (err, hash) => {
@@ -30,11 +29,9 @@ exports.postItem = (req, res, next) => {
                         pass: hash
                     })
                     .then(result => {
-                        console.log("hash",result)
                         return res.status(200).json({ message: 'Information is successfully stored' });
                     })
                     .catch(err => {
-                        console.log("err",err)
                         return res.status(500).json({ error: 'Failed to store information' });
                     });
                 });
@@ -77,7 +74,7 @@ exports.findnewUsers = async (req,res,next) =>{
     const userCount = await Signup.count();
     try{
         if(newusers){
-            res.status(200).json({message:'New Users fetched',users:newusers,userCount:userCount})
+            res.status(200).json({message:'New Users fetched',users:newusers,userCount:userCount,currentuser:req.user.userId})
         } else {
             res.status(404).json({message:"Unable to fetch users"})
         }

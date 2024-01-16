@@ -128,7 +128,7 @@ async function createGroups(event) {
     let ul = document.createElement('ul');     
 
 groupMembers.forEach((user) => {
-        // if(user.id!=response.data.currentuser){
+        if(user.id!=response.data.currentuser){
                 let li = document.createElement('li'); 
                 let userName = document.createTextNode(user.name);
                 let addButton = document.createElement('button');
@@ -169,7 +169,9 @@ groupMembers.forEach((user) => {
                 li.appendChild(userName);
                 li.appendChild(addButton);
                 ul.appendChild(li);
-        // }
+        }else{
+                groups.push(response.data.currentuser)
+        }
    
 });
     let membersContainer = document.getElementById('members');
@@ -183,7 +185,7 @@ async function userGroups(){
     let token = localStorage.getItem("token");
     let groupName = document.getElementById('grpName').value;
 
-    console.log(groupName)
+    socket.emit("creatinggroup",groupName)
 
     if(groupName===""){
         alert("Please Enter Group Name")
@@ -227,6 +229,7 @@ async function inviteUsers(){
         }
 
         await displayGroupUsers(groupName,groupId)
+        
     }
 
 // GroupChats.addEventListener('click',displaygroupMessages);
@@ -234,13 +237,15 @@ async function inviteUsers(){
 
 
 async function fetchUserGroup() {
-        
+
     let token = localStorage.getItem("token");
     let response = await axios.get(`http://localhost:3000/groups/fetchgroups`, {
         headers: {
             'Authorization': token
         }
     });
+
+    GroupChats.innerHTML="";
 
     response.data.groups.forEach(group => {
         const groupDiv = document.createElement('div');
@@ -290,7 +295,7 @@ async function sendMesssage(){
         if(normalchats===true){
                 await storeMessagestoBackend();
         } else {
-                await storeGroupMessages()
+                await storeGroupMessages();
         }
 }
 
@@ -299,8 +304,11 @@ async function storeGroupMessages(){
         let token = localStorage.getItem("token");
         let groupId = chatgroupusers[0].usergroups.groupId;
 
-        socket.emit("sendGroupMessages",text)
         
+
+        socket.emit("sendGroupMessages",text)
+        document.getElementById('text').value = "";
+
         let response = await axios.post(`http://localhost:3000/groupmessageRoute/fetchgroupUsers`, {
                 message: text,
                 groupId:groupId
@@ -309,7 +317,7 @@ async function storeGroupMessages(){
                         'Authorization': token
                 }
         })
-        document.getElementById('text').value = "";
+
 }
 
 
@@ -413,9 +421,6 @@ textField.addEventListener('click', function() {
      }
     displayUsers();
 });
-
-
-
 
 async function fetchUsers() {
     let token = localStorage.getItem('token');
@@ -668,3 +673,11 @@ function displayLastTenMessages(response) {
 
 displayUsers();
 fetchUserGroup();
+
+socket.on('groupcreated',async(groupName)=>{
+        console.log(groupName)
+        setTimeout(async () => {
+                await fetchUserGroup();
+            }, 1000);
+        
+})

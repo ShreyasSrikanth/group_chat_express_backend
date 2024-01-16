@@ -74,6 +74,11 @@ io.on("connection", socket => {
   socket.on("sendGroupMessages",(message)=>{
     io.emit('newgroupmessagesstored',message)
   })
+
+  socket.on("creatinggroup", (groupName)=>{
+    console.log(groupName)
+    io.emit('groupcreated',groupName)
+  })
 });
 
 
