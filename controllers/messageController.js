@@ -56,3 +56,12 @@ exports.getNewMessages = async (req, res, next) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+
+const S3services = require('../services/S3service');
+exports.filesUpload =  async (req,res,next) =>{
+    const fileBuffer = req.body;
+    console.log(req.file,"upload succesfull")
+
+    res.json(req.file)
+}

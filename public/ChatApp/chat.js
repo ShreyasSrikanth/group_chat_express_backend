@@ -35,6 +35,14 @@ let normalchats = true;
 let groupAdmin;
 let usergroup;
 
+const fileInput = document.getElementById("file");
+
+fileInput.addEventListener('change', async (event) => {
+
+    });
+
+
+
 let inviteUserButton = document.getElementById('invite');
 
 const socket = io('http://localhost:3000')
@@ -183,6 +191,7 @@ groupMembers.forEach((user) => {
 
 sendgrpInfo.addEventListener('click',userGroups)
 async function userGroups(){
+        
     let token = localStorage.getItem("token");
     let groupName = document.getElementById('grpName').value;
 
@@ -303,8 +312,6 @@ async function storeGroupMessages(){
         let token = localStorage.getItem("token");
         let groupId = chatgroupusers[0].usergroups.groupId;
 
-        
-
         socket.emit("sendGroupMessages",text)
         document.getElementById('text').value = "";
 
@@ -316,31 +323,57 @@ async function storeGroupMessages(){
                         'Authorization': token
                 }
         })
-
+  
 }
 
 
 
 async function storeMessagestoBackend() {
-        let text = document.getElementById('text').value;
-        let token = localStorage.getItem("token");
-        let count = localStorage.getItem("userCount");
+        const fileInput = document.getElementById('file');
+        const selectedFile = fileInput.files[0];
 
-        socket.emit("send",text)
+        if (selectedFile) {
+            let token = localStorage.getItem('token');
+        
+            const formData = new FormData();
 
-        if (count === "1") {
-                alert("No users to send messages")
+            formData.append('file', fileInput.files[0]);
+            console.log("fileInput",fileInput.files[0])
+        
+            try {
+                const response = await axios.post('http://localhost:3000/message/filesUpload', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',  
+                        'Authorization': token,
+                    },
+                });
+
+                console.log(response.data); 
+                
+            } catch (error) {
+                console.error('Error during file upload:', error);
+            }
         } else {
-
-        let response = await axios.post(`http://localhost:3000/message/storechat`, {
-                message: text
-        }, {
-                headers: {
-                        'Authorization': token
+                let text = document.getElementById('text').value;
+                let token = localStorage.getItem("token");
+                let count = localStorage.getItem("userCount");
+        
+                socket.emit("send",text)
+        
+                if (count === "1") {
+                        alert("No users to send messages")
+                } else {
+        
+                let response = await axios.post(`http://localhost:3000/message/storechat`, {
+                        message: text
+                }, {
+                        headers: {
+                                'Authorization': token
+                        }
+                })
+        
+                        document.getElementById('text').value = "";
                 }
-        })
-
-                document.getElementById('text').value = "";
         }
 }
 

@@ -26,6 +26,17 @@ const groupRoute = require('./routes/groupRoute');
 const groupmessageRoute = require('./routes/groupmessageRoute');
 const groupAdminRoute = require('./routes/groupAdminRoute');
 
+
+const multer = require('multer');
+const uploadF = multer({dest: 'uploads/'})
+
+app.post('/file/upload',uploadF.single('file'), (req,res) =>{
+  console.log("buffer")
+  console.log("req.user.userId")
+
+  res.send("Upload succesfull")
+}) 
+
 const accessLogStream = fs.createWriteStream(
     path.join(__dirname,'access.log'),
     {flags:'a'}
