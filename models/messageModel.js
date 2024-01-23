@@ -19,7 +19,8 @@ const message = database.define('messages',{
     updatedAt:{
         type: sequelize.DATE,
         defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    }
+    },
+    fileUrl: sequelize.STRING
 })
 
 module.exports = message;

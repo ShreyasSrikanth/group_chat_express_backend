@@ -28,12 +28,21 @@ const groupAdminRoute = require('./routes/groupAdminRoute');
 
 
 const multer = require('multer');
-const uploadF = multer({dest: 'uploads/'})
+const uploadF = multer({dest: 'uploads/'});
+
+
+const archivedChatController = require('./controllers/archivedChatController');
+
+const cron = require('cron');
+const scheduledJob = new cron.CronJob('0 0 * * *', function() {
+  archivedChatController.moveAndDeleteMessages()
+});
+
+scheduledJob.start();
 
 app.post('/file/upload',uploadF.single('file'), (req,res) =>{
   console.log("buffer")
   console.log("req.user.userId")
-
   res.send("Upload succesfull")
 }) 
 
@@ -79,7 +88,13 @@ app.get('/:dynamicRoute', (req, res) => {
 
 io.on("connection", socket => {
   socket.on("send",(message)=>{
+    console.log(message)
     io.emit('newmessagestored',message)
+  })
+
+  socket.on("sendfile",(selectedFile)=>{
+    console.log("heyyyy=============------------->",selectedFile)
+    io.emit('fileSent',selectedFile)
   })
 
   socket.on("sendGroupMessages",(message)=>{

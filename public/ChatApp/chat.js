@@ -333,8 +333,10 @@ async function storeMessagestoBackend() {
         const selectedFile = fileInput.files[0];
 
         if (selectedFile) {
+            let text = document.getElementById('text').value;
+            socket.emit("sendfile",selectedFile)
+
             let token = localStorage.getItem('token');
-        
             const formData = new FormData();
 
             formData.append('file', fileInput.files[0]);
@@ -348,7 +350,7 @@ async function storeMessagestoBackend() {
                     },
                 });
 
-                console.log(response.data); 
+                console.log(response.data.fileUrl);
                 
             } catch (error) {
                 console.error('Error during file upload:', error);
@@ -394,13 +396,17 @@ async function fetchNewMessages() {
                         setTimeout(async () => {
                             await appendNewMessage();
                         }, 500);
+                });
+
+                socket.on("fileSent", async (message) => {
+                        setTimeout(async () => {
+                            await appendNewMessage();
+                        }, 5000);
                     });
-        
 
             } else{
 
                 appendGroupMessage();
-
                 socket.on("newgroupmessagesstored", async (message) => {
                         await appendGroupMessage();
                     },500);
@@ -421,7 +427,12 @@ async function fetchAllMessages() {
                         setTimeout(async () => {
                             await getMessagesfromBackend();
                         }, 500);
-                    });
+                });
+                socket.on("fileSent", async (message) => {
+                        setTimeout(async () => {
+                            await getMessagesfromBackend();
+                        }, 5000);
+                });
         } else {
                 getAllGroupMessagesfromBackend();
 
@@ -497,6 +508,7 @@ async function displayUsers() {
                 } else{
                         if (user.id===groupAdmin){
                                 li.textContent = `${currentUser} admin`;
+                                
                         } else {
                                 let token = localStorage.getItem('token');
                                 let groupId = chatgroupusers[0].usergroups.groupId;
@@ -552,7 +564,13 @@ async function displayUsers() {
                 setTimeout(async () => {
                     await appendNewMessage();
                 }, 500);
-            });
+        });
+        socket.on("fileSent", async (message) => {
+                console.log("file====>",message)
+                setTimeout(async () => {
+                    await appendNewMessage();
+                }, 5000);
+        });
     } else{
         appendGroupMessage()
         socket.on("newgroupmessagesstored", async (message) => {
@@ -630,9 +648,15 @@ async function appendNewMessage() {
                         'Authorization': token
                 }
         });
+        console.log(response)
         localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
         displayLastTenMessages(response);
 }
+
+function getFileExtensionFromUrl(url) {
+        const match = url.match(/\.([a-z0-9]+)(?:[\?#]|$)/i);
+        return match ? match[1].toLowerCase() : '';
+    }
 
 function displayLastTenMessages(response) {
         let ul = document.createElement('ul');
@@ -647,28 +671,54 @@ function displayLastTenMessages(response) {
         if(normalchats===true){
                 newMessage.forEach((message) => {
                         let li = document.createElement('li');
+                        let userName;
+                        let userMessage;
+                    
                         if (message.UserId === response.data.currentUserId) {
-                                userName = "You";
-                                userMessage = message.message;
+                            userName = "You";
+                            userMessage = message.message;
                         } else {
-                                if (response.data.user && Array.isArray(response.data.user)) {
-                                        let user = response.data.user.find(user => user.id === message.UserId);
-                                        userName = user ? user.name : "Unknown";
-                                } else {
-                                        userName = "Unknown";
-                                }
-                                userMessage = message.message;
+                            if (response.data.user && Array.isArray(response.data.user)) {
+                                let user = response.data.user.find(user => user.id === message.UserId);
+                                userName = user ? user.name : "Unknown";
+                            } else {
+                                userName = "Unknown";
+                            }
+                            userMessage = message.message;
+                            console.log(message.fileUrl);
                         }
-        
+                    console.log(userMessage)
+                    if(userMessage!=null){
                         li.textContent = `${userName}: ${userMessage}`;
+                    } else {
+                        li.textContent = `${userName}`;
+                    }
+                    
+                        // Display fileUrl only if it's not empty
+                        if (message.fileUrl && message.fileUrl.trim() !== "") {
+                            const fileExtension = getFileExtensionFromUrl(message.fileUrl);
+                            console.log(fileExtension)
+                            let fileLink = document.createElement('a');
+                            fileLink.href = message.fileUrl;
+                            if(fileExtension!=='pdf' ){
+                                let imageElement = document.createElement('img');
+                                imageElement.style.maxWidth = '50%';
+                                imageElement.src = message.fileUrl
+                                li.appendChild(imageElement)
+                            } else{
+                                fileLink.textContent = 'Click to preview file';
+                                li.appendChild(fileLink);    
+                            }
+                        }
                         li.style.backgroundColor = ul.children.length % 2 === 0 ? "#CCCCCC" : "#FFFFFF";
                         li.style.width = "88%";
                         li.style.borderRadius = "4px";
                         li.style.marginBottom = "1%";
                         li.style.listStyleType = "none";
-        
+                    
                         ul.appendChild(li);
-                });
+                    });
+                    
         
         } else {
                 newMessage.forEach((message) => {
