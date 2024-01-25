@@ -8,7 +8,8 @@ const groupmessages = database.define('groupmessages',{
         autoNull: false,
         primaryKey:true
     },
-    message:sequelize.STRING
+    message:sequelize.STRING,
+    fileUrl: sequelize.STRING
 });
 
 module.exports=groupmessages;

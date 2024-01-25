@@ -308,21 +308,53 @@ async function sendMesssage(){
 }
 
 async function storeGroupMessages(){
-        let text = document.getElementById('text').value;
-        let token = localStorage.getItem("token");
-        let groupId = chatgroupusers[0].usergroups.groupId;
+        const fileInput = document.getElementById('file');
+        const selectedFile = fileInput.files[0];
 
-        socket.emit("sendGroupMessages",text)
-        document.getElementById('text').value = "";
-
-        let response = await axios.post(`http://localhost:3000/groupmessageRoute/fetchgroupUsers`, {
-                message: text,
-                groupId:groupId
-        },{
-                headers: {
-                        'Authorization': token
+        if (selectedFile){
+                let text = document.getElementById('text').value;
+                let groupId = chatgroupusers[0].usergroups.groupId;
+                socket.emit("sendGroupFile",selectedFile)
+    
+                let token = localStorage.getItem('token');
+                const formData = new FormData();
+    
+                formData.append('file', fileInput.files[0]);
+                console.log("fileInput",fileInput.files[0])
+            
+                try {
+                    const response = await axios.post('http://localhost:3000/groupmessageRoute/filesUpload', formData,{
+                        headers: {
+                            'Content-Type': 'multipart/form-data',  
+                            'Authorization': token,
+                        },
+                        params: {
+                                groupId: groupId,
+                            },
+                    });
+    
+                    console.log(response.data.fileUrl);
+                    
+                } catch (error) {
+                    console.error('Error during file upload:', error);
                 }
-        })
+        } else{
+                let text = document.getElementById('text').value;
+                let token = localStorage.getItem("token");
+                let groupId = chatgroupusers[0].usergroups.groupId;
+        
+                socket.emit("sendGroupMessages",text)
+                document.getElementById('text').value = "";
+        
+                let response = await axios.post(`http://localhost:3000/groupmessageRoute/fetchgroupUsers`, {
+                        message: text,
+                        groupId:groupId
+                },{
+                        headers: {
+                                'Authorization': token
+                        }
+                })        
+        }
   
 }
 
@@ -350,7 +382,6 @@ async function storeMessagestoBackend() {
                     },
                 });
 
-                console.log(response.data.fileUrl);
                 
             } catch (error) {
                 console.error('Error during file upload:', error);
@@ -410,6 +441,9 @@ async function fetchNewMessages() {
                 socket.on("newgroupmessagesstored", async (message) => {
                         await appendGroupMessage();
                     },500);
+                socket.on("filesentingroup", async (message) => {
+                      await appendGroupMessage();
+                },500);
             }
 }
 
@@ -441,6 +475,9 @@ async function fetchAllMessages() {
                             await getAllGroupMessagesfromBackend();
                         }, 500);
                     });
+                socket.on("filesentingroup", async (message) => {
+                        await appendGroupMessage();
+                },500);
         }
 }
 
@@ -578,6 +615,9 @@ async function displayUsers() {
                     await appendGroupMessage();
                 }, 500);
             });
+        socket.on("filesentingroup", async (message) => {
+                await appendGroupMessage();
+        },500);
 
     }
         
@@ -616,7 +656,7 @@ async function appendGroupMessage() {
                 }
         });
 
-
+        console.log(response);
         localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
         displayLastTenMessages(response);
 
@@ -724,6 +764,8 @@ function displayLastTenMessages(response) {
                 newMessage.forEach((message) => {
                         let li = document.createElement('li');
 
+                        // console.log(message)
+
                         if (message.UserId === response.data.currentUserId) {
                                 userName = "You";
                                 userMessage = message.message;
@@ -735,8 +777,28 @@ function displayLastTenMessages(response) {
                                 }
                                 userMessage = message.message;
                         }
-        
-                        li.textContent = `${userName}: ${userMessage}`;
+                        if(message.message!=null){
+                                li.textContent = `${userName}: ${userMessage}`;
+                        } else {
+                                li.textContent = `${userName}`;
+                        }
+
+                        if (message.fileUrl && message.fileUrl.trim() !== "") {
+                                const fileExtension = getFileExtensionFromUrl(message.fileUrl);
+                                console.log(fileExtension)
+                                let fileLink = document.createElement('a');
+                                fileLink.href = message.fileUrl;
+                                if(fileExtension!=='pdf' ){
+                                    let imageElement = document.createElement('img');
+                                    imageElement.style.maxWidth = '50%';
+                                    imageElement.src = message.fileUrl
+                                    li.appendChild(imageElement)
+                                } else{
+                                    fileLink.textContent = 'Click to preview file';
+                                    li.appendChild(fileLink);    
+                                }
+                            }
+
                         li.style.backgroundColor = ul.children.length % 2 === 0 ? "#CCCCCC" : "#FFFFFF";
                         li.style.width = "88%";
                         li.style.borderRadius = "4px";

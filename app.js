@@ -35,6 +35,7 @@ const archivedChatController = require('./controllers/archivedChatController');
 
 const cron = require('cron');
 const scheduledJob = new cron.CronJob('0 0 * * *', function() {
+  console.log("hii")
   archivedChatController.moveAndDeleteMessages()
 });
 
@@ -99,6 +100,10 @@ io.on("connection", socket => {
 
   socket.on("sendGroupMessages",(message)=>{
     io.emit('newgroupmessagesstored',message)
+  })
+
+  socket.on("sendGroupFile",(message)=>{
+    io.emit('filesentingroup',message)
   })
 
   socket.on("creatinggroup", (groupName)=>{
