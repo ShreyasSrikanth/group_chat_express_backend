@@ -63,7 +63,7 @@ exports.getNewGroupMessages = async (req, res, next) => {
                 }
             ],
             order: [['createdAt', 'DESC']],
-            limit:10
+            limit:11
         });
         
         if (lastTenMessages && lastTenMessages.length > 0) {
@@ -95,7 +95,6 @@ exports.filesUpload = async (req, res, next) => {
         const fileUrl = await S3services.uploadToS3(fileBuffer, filename, mimetype);
 
         console.log(req.user.userId)
-        console.log("=-=-=-=-=-=->",req)
 
         if(fileUrl){
             await userModel.findOne({where:{id:req.user.userId}})

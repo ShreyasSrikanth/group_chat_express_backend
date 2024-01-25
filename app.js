@@ -103,6 +103,7 @@ io.on("connection", socket => {
   })
 
   socket.on("sendGroupFile",(message)=>{
+    console.log("messageeeeeeee==========>",message)
     io.emit('filesentingroup',message)
   })
 

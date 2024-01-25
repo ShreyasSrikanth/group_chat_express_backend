@@ -320,7 +320,7 @@ async function storeGroupMessages(){
                 const formData = new FormData();
     
                 formData.append('file', fileInput.files[0]);
-                console.log("fileInput",fileInput.files[0])
+                // console.log("fileInput",fileInput.files[0])
             
                 try {
                     const response = await axios.post('http://localhost:3000/groupmessageRoute/filesUpload', formData,{
@@ -333,7 +333,7 @@ async function storeGroupMessages(){
                             },
                     });
     
-                    console.log(response.data.fileUrl);
+                //     console.log(response);
                     
                 } catch (error) {
                     console.error('Error during file upload:', error);
@@ -372,7 +372,7 @@ async function storeMessagestoBackend() {
             const formData = new FormData();
 
             formData.append('file', fileInput.files[0]);
-            console.log("fileInput",fileInput.files[0])
+        //     console.log("fileInput",fileInput.files[0])
         
             try {
                 const response = await axios.post('http://localhost:3000/message/filesUpload', formData, {
@@ -417,8 +417,8 @@ loadNewMessage.addEventListener("click", fetchNewMessages);
 
 
 async function fetchNewMessages() {
-    loadNewMessage.disabled = true;
-    loadAllMessage.disabled = false;
+//     loadNewMessage.disabled = true;
+//     loadAllMessage.disabled = false;
 
         if(normalchats===true){
                 appendNewMessage();
@@ -442,16 +442,18 @@ async function fetchNewMessages() {
                         await appendGroupMessage();
                     },500);
                 socket.on("filesentingroup", async (message) => {
-                      await appendGroupMessage();
-                },500);
+                        setTimeout(async () => {
+                                await appendGroupMessage();
+                        }, 500);
+                });
             }
 }
 
 loadAllMessage.addEventListener("click", fetchAllMessages);
 
 async function fetchAllMessages() {
-    loadNewMessage.disabled = false; 
-    loadAllMessage.disabled = true; 
+//     loadNewMessage.disabled = false; 
+//     loadAllMessage.disabled = true; 
        
         if(normalchats===true){
 
@@ -476,8 +478,10 @@ async function fetchAllMessages() {
                         }, 500);
                     });
                 socket.on("filesentingroup", async (message) => {
-                        await appendGroupMessage();
-                },500);
+                        setTimeout(async () => {
+                                await appendGroupMessage();
+                        }, 500);
+                });
         }
 }
 
@@ -603,7 +607,7 @@ async function displayUsers() {
                 }, 500);
         });
         socket.on("fileSent", async (message) => {
-                console.log("file====>",message)
+                // console.log("file====>",message)
                 setTimeout(async () => {
                     await appendNewMessage();
                 }, 5000);
@@ -616,8 +620,10 @@ async function displayUsers() {
                 }, 500);
             });
         socket.on("filesentingroup", async (message) => {
-                await appendGroupMessage();
-        },500);
+                setTimeout(async () => {
+                        await appendGroupMessage();
+                }, 5000);
+        });
 
     }
         
@@ -656,7 +662,7 @@ async function appendGroupMessage() {
                 }
         });
 
-        console.log(response);
+        console.log("-=--=-=-=----------->",response);
         localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
         displayLastTenMessages(response);
 
@@ -688,7 +694,6 @@ async function appendNewMessage() {
                         'Authorization': token
                 }
         });
-        console.log(response)
         localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
         displayLastTenMessages(response);
 }
@@ -725,9 +730,7 @@ function displayLastTenMessages(response) {
                                 userName = "Unknown";
                             }
                             userMessage = message.message;
-                            console.log(message.fileUrl);
                         }
-                    console.log(userMessage)
                     if(userMessage!=null){
                         li.textContent = `${userName}: ${userMessage}`;
                     } else {
@@ -737,7 +740,6 @@ function displayLastTenMessages(response) {
                         // Display fileUrl only if it's not empty
                         if (message.fileUrl && message.fileUrl.trim() !== "") {
                             const fileExtension = getFileExtensionFromUrl(message.fileUrl);
-                            console.log(fileExtension)
                             let fileLink = document.createElement('a');
                             fileLink.href = message.fileUrl;
                             if(fileExtension!=='pdf' ){
@@ -785,7 +787,6 @@ function displayLastTenMessages(response) {
 
                         if (message.fileUrl && message.fileUrl.trim() !== "") {
                                 const fileExtension = getFileExtensionFromUrl(message.fileUrl);
-                                console.log(fileExtension)
                                 let fileLink = document.createElement('a');
                                 fileLink.href = message.fileUrl;
                                 if(fileExtension!=='pdf' ){
