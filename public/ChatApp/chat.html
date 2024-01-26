@@ -46,10 +46,13 @@
       #textField{
       height: 6%;
       font-size: medium;
-      background-color:rgb(155, 138, 138);
+      /* background-color:rgb(155, 138, 138); */
       display: flex;
-      justify-content: center; /* Horizontally center */
+      justify-content: center;
       align-items: center;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      border: 1px solid lavenderblush;
       }
       #chats {
       height: 100%;
@@ -89,8 +92,9 @@
       border-radius: 4px;
       font-size: x-small;
       border: none;
-      background-color: burlywood;
+      background-color: rgb(12, 12, 12);
       transition: background-color 0.3s ease;
+      color: aliceblue;
       }
       #createGroup:hover {
       cursor: pointer;
@@ -124,10 +128,12 @@
       border: none;
       background-color: rgb(175, 110, 24);
       transition: background-color 0.3s ease;
+      color: aliceblue;
       }
       #oldmessage:hover {
       cursor: pointer;
       background-color: sandybrown;
+      color: aliceblue;
       }
       #newmessage{
       border-radius: 4px;
@@ -137,10 +143,12 @@
       transition: background-color 0.3s ease;
       margin-top: 4px;
       margin-bottom: 4px;
+      color: aliceblue;
       }
       #newmessage:hover {
       cursor: pointer;
       background-color: sandybrown;
+      color: aliceblue;
       }
       #sendgrpInfo{
       border-radius: 4px;
@@ -185,6 +193,19 @@
       height: 100%;
       background-color: rgba(0, 0, 0, 0.5); 
       z-index: 9999;
+      }
+      #invite{
+      display: block;
+      background: cadetblue;
+      border: none;
+      margin-top: 4px;
+      border-radius: 5px;
+      color: aliceblue;
+      }
+      #file{
+      margin-left: 9px;
+      background-color: blanchedalmond;
+      -webkit-text-stroke-width: medium;
       }
       #groupFormDiv {
       position: absolute;
@@ -288,7 +309,7 @@
             
             <div id="chatBar">
                <h3>Chats</h3>
-
+               
                <div id="textField">
                   <p style="margin-top: 5px;">chats</p>
                </div>

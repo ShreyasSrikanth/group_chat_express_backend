@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 require('dotenv').config();
 
-const uploadToS3 = (fileBuffer,filename,mimetype) => {
+const uploadToS3 = (fileBuffer, filename, mimetype) => {
 
     const BUCKET_NAME = process.env.BUCKET_NAME;
     const IAM_USER_KEY = process.env.IAM_USER_KEY;
@@ -12,12 +12,10 @@ const uploadToS3 = (fileBuffer,filename,mimetype) => {
         secretAccessKey: IAM_USER_SECRET
     });
 
-    console.log(filename,fileBuffer,mimetype)
-
     const params = {
         Bucket: BUCKET_NAME,
         Key: filename,
-        Body:fileBuffer,
+        Body: fileBuffer,
         ContentType: mimetype,
         ACL: 'public-read'
     };
@@ -33,6 +31,6 @@ const uploadToS3 = (fileBuffer,filename,mimetype) => {
     });
 }
 
-module.exports ={
+module.exports = {
     uploadToS3
 }

@@ -151,23 +151,36 @@ async function fetchInviteUsers(req, res, next) {
 async function addUserToGroup(req, res, next) {
     try {
         let groupId = req.body.groupId;
-        let groupUsers = req.body.groupUsers;  
+        let groupUsers = req.body.groupUsers; 
+        let currentUser = req.user.userId;
         
-        const newUserGroupRecords = await Promise.all(
-            groupUsers.map(async (userId) => {
-                return await usergroupModel.create({
-                    UserId: userId,
-                    groupId: groupId,
-                    
-                });
-            })
-        );
+        let groupInvite = await groupAdminModel.findOne({
+            where: {
+                groupadminId: currentUser,
+                groupId: groupId
+            }
+        });
 
-        res.status(201).json({ message: 'User added to the group successfully', users:newUserGroupRecords });
+        if (groupInvite) {
+            const newUserGroupRecords = await Promise.all(
+                groupUsers.map(async (userId) => {
+                    return await usergroupModel.create({
+                        UserId: userId,
+                        groupId: groupId,
+                    });
+                })
+            );
+    
+            res.status(201).json({ message: 'User added to the group successfully', users: newUserGroupRecords });
+        } else {
+            res.status(404).json({ message: 'You are not an admin or there is no invitation' });
+        }
+        
     } catch (error) {
-        next(error); // Pass the error to the error handling middleware
+        next(error); 
     }
 }
+
 
 
 

@@ -70,8 +70,6 @@ exports.filesUpload = async (req, res, next) => {
         
         const fileUrl = await S3services.uploadToS3(fileBuffer, filename, mimetype);
 
-        console.log(req.user.userId)
-
         if(fileUrl){
             await User.findOne({where:{id:req.user.userId}})
             .then(async(user) => {
