@@ -582,8 +582,8 @@ async function displayUsers() {
                     }
                 });
 
-                removeButton.style.marginRight="2px";    
-                removeButton.style.position = "absolute";
+                removeButton.style.marginLeft="2%";    
+                removeButton.style.position = "static";
                 /* display: flex; */
                 /* justify-content: end; */
                 /* align-items: end; */
