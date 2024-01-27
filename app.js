@@ -4,11 +4,11 @@ const express = require('express');
 const fs = require('fs');
 const http = require('http');
 
-const userModel = require('./models/signupModel');
-const messageModel = require("./models/messageModel");
-const groupModel = require("./models/groupModel");
-const groupmessagesModel = require('./models/groupMessageModel');
-const groupAdminModel = require('./models/groupAdminModel');
+const userModel = require('./models/user-sign-up');
+const messageModel = require("./models/user-message");
+const groupModel = require("./models/group-creation");
+const groupmessagesModel = require('./models/group-message');
+const groupAdminModel = require('./models/group-admin');
 
 const app = express();
 const server = http.createServer(app);
@@ -18,10 +18,10 @@ const io = require('socket.io')(server);
 const sequelize = require('./util/database');
 const bodyParser = require('body-parser');
 
-const signupRoute = require('./routes/signUpRoute');
-const messageRoute = require('./routes/messageRoute');
-const groupRoute = require('./routes/groupRoute');
-const groupmessageRoute = require('./routes/groupmessageRoute');
+const signupRoute = require('./routes/sign-up');
+const messageRoute = require('./routes/user-message');
+const groupRoute = require('./routes/user-group');
+const groupmessageRoute = require('./routes/group-message');
 
 
 
@@ -31,7 +31,7 @@ const uploadF = multer({
 });
 
 
-const archivedChatController = require('./controllers/archivedChatController');
+const archivedChatController = require('./controllers/archived-chat');
 
 const cron = require('cron');
 const scheduledJob = new cron.CronJob('0 0 * * *', function() {
@@ -84,7 +84,7 @@ groupAdminModel.belongsTo(groupModel);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
-    res.redirect('/Login/login.html');
+    res.redirect('/login/login.html');
 });
 
 app.get('/:dynamicRoute', (req, res) => {
@@ -118,7 +118,7 @@ io.on("connection", socket => {
 sequelize.sync()
     .then(res => {
         server.listen(3000, () => {
-            console.log('Server running on http://3.81.56.39:3000');
+            console.log('Server running on http://localhost:3000');
         });
     })
     .catch(err => {

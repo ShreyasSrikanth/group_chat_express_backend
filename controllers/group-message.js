@@ -1,5 +1,5 @@
-const userModel = require('../models/signupModel');
-const groupMessageModel = require('../models/groupMessageModel');
+const userModel = require('../models/user-sign-up');
+const groupMessageModel = require('../models/group-message');
 
 const database = require('../util/database');
 
@@ -79,7 +79,7 @@ exports.getNewGroupMessages = async (req, res, next) => {
 
 
 
-const S3services = require('../services/S3services');
+const S3services = require('../services/s3-services');
 exports.filesUpload = async (req, res, next) => {
     try {
         const filePath = req.file.path;

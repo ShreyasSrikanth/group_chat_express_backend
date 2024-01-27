@@ -1,8 +1,8 @@
-const Signup = require('../models/signupModel');
+const Signup = require('../models/user-sign-up');
 
 const {
     post
-} = require('../routes/signUpRoute');
+} = require('../routes/sign-up');
 const {
     where
 } = require('sequelize');

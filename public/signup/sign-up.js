@@ -11,7 +11,7 @@ async function sendSignUpDetails(e){
     let pass = document.getElementById('password').value;
 
     try{
-        await axios.post('http://3.81.56.39:3000/users/signup', {
+        await axios.post('http://localhost:3000/users/signup', {
             name: name,
             email: email,
             phone: phone,
@@ -25,7 +25,7 @@ async function sendSignUpDetails(e){
             document.getElementById('phnum').value = "";
             document.getElementById('password').value = "";
 
-            window.location.href = '../Login/login.html';
+            window.location.href = '../login/login.html';
         })
     } catch (err) {
         

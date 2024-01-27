@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const Router = express.Router();
 
-const messageController = require('../controllers/messageController');
+const messageController = require('../controllers/user-message');
 const authUser = require('../middlewear/auth');
 
 const multer = require('multer');

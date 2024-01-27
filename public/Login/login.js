@@ -5,7 +5,7 @@ loginForm.addEventListener('submit',userAuthentication);
 signupButton.addEventListener('click',signUpRedirect);
 
 function signUpRedirect() {
-    window.location.href = "../SignUp/signUp.html";
+    window.location.href = "../signup/sign-up.html";
 }
 
 async function userAuthentication(e) {
@@ -21,13 +21,13 @@ async function userAuthentication(e) {
 
     try {
 
-        await axios.post("http://3.81.56.39:3000/users/login",{
+        await axios.post("http://localhost:3000/users/login",{
             email:email,
             pass:pass
         }).then(res => {
             alert("Login succesful")
             localStorage.setItem("token",res.data.token)
-            window.location.href = "../ChatApp/chat.html";
+            window.location.href = "../chatapp/chat.html";
         })
 
     } catch (err) {

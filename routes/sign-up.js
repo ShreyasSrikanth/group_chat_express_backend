@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const Router = express.Router();
 
-const signupController = require('../controllers/signupController');
+const signupController = require('../controllers/sign-up');
 const authUser = require('../middlewear/auth');
 
 Router.post('/signup',signupController.postItem);

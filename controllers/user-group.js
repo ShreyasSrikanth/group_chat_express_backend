@@ -1,10 +1,10 @@
-const userModel = require('../models/signupModel');
-const groupModel = require('../models/groupModel');
-const groupAdminModel = require('../models/groupAdminModel');
-const usergroupModel = require('../models/usergroupModel');
+const userModel = require('../models/user-sign-up');
+const groupModel = require('../models/group-creation');
+const groupAdminModel = require('../models/group-admin');
+const usergroupModel = require('../models/users-groups');
 
 const database = require('../util/database');
-const usergroups = require('../models/groupModel');
+const usergroups = require('../models/group-creation');
 
 async function createGroups(req, res, next) {
     const t = await database.transaction();

@@ -3,7 +3,7 @@ const express = require('express');
 const Router = express.Router();
 
 const authUser = require('../middlewear/auth');
-const groupController = require('../controllers/groupController');
+const groupController = require('../controllers/user-group');
 
 Router.post('/createGroups',authUser.authentication,groupController.createGroups);
 Router.get('/fetchgroups',authUser.authentication,groupController.fetchGroups);

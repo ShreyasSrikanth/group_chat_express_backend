@@ -1,5 +1,5 @@
-const messageModel = require('../models/messageModel');
-const archivedChatModel = require('../models/archivedChatModel');
+const messageModel = require('../models/user-message');
+const archivedChatModel = require('../models/archived-chat');
 
 const { Op } = require('sequelize');
 

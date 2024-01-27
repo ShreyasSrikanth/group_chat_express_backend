@@ -3,7 +3,7 @@ const express = require('express');
 const Router = express.Router();
 
 const authUser = require('../middlewear/auth');
-const groupMessaageController = require('../controllers/groupMessaageController');
+const groupMessaageController = require('../controllers/group-message');
 
 const multer = require('multer');
 const storage = multer.diskStorage({

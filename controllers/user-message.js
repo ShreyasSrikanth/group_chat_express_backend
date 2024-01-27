@@ -1,5 +1,5 @@
-const Message = require('../models/messageModel');
-const User = require("../models/signupModel");
+const Message = require('../models/user-message');
+const User = require("../models/user-sign-up");
 
 const database = require('../util/database');
 
@@ -58,7 +58,7 @@ exports.getNewMessages = async (req, res, next) => {
 };
 
 
-const S3services = require('../services/S3services');
+const S3services = require('../services/s3-services');
 exports.filesUpload = async (req, res, next) => {
     try {
         const filePath = req.file.path;
