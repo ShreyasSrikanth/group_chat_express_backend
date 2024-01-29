@@ -11,7 +11,7 @@ async function sendSignUpDetails(e){
     let pass = document.getElementById('password').value;
 
     try{
-        await axios.post('http://localhost:3000/users/signup', {
+        await axios.post('http://3.87.172.140:3000/users/signup', {
             name: name,
             email: email,
             phone: phone,
