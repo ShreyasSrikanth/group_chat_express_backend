@@ -1,7 +1,7 @@
 const database = require('../util/database');
 const sequelize = require('sequelize');
 
-const groupadmin = database.define('groupadmin',{
+const groupAdmin = database.define('groupadmin',{
     id:{
         type: sequelize.INTEGER,
         autoIncrement: true,
@@ -16,4 +16,4 @@ const groupadmin = database.define('groupadmin',{
     },
 });
 
-module.exports=groupadmin;
+module.exports=groupAdmin;

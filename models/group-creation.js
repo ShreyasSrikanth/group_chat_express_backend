@@ -1,7 +1,7 @@
 const sequelize = require('sequelize')
 const database = require('../util/database');
 
-const usergroups = database.define('groups',{
+const userGroups = database.define('groups',{
     id:{
         type:sequelize.INTEGER,
         autoIncrement:true,
@@ -12,4 +12,4 @@ const usergroups = database.define('groups',{
     groupadminId:sequelize.INTEGER
 });
 
-module.exports = usergroups;
+module.exports = userGroups;

@@ -1,7 +1,7 @@
 const database = require('../util/database');
 const sequelize = require('sequelize');
 
-const groupmessages = database.define('groupmessages',{
+const groupMessages = database.define('groupmessages',{
     id:{
         type: sequelize.INTEGER,
         autoIncrement: true,
@@ -12,4 +12,4 @@ const groupmessages = database.define('groupmessages',{
     fileUrl: sequelize.STRING
 });
 
-module.exports=groupmessages;
+module.exports=groupMessages;

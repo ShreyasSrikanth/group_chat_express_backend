@@ -1,7 +1,7 @@
 const sequelize = require("sequelize");
 const database = require("../util/database");
 
-const message = database.define('messages',{
+const Message = database.define('messages',{
     id:{
         type: sequelize.INTEGER,
         autoIncrement: true,
@@ -23,4 +23,4 @@ const message = database.define('messages',{
     fileUrl: sequelize.STRING
 })
 
-module.exports = message;
+module.exports = Message;

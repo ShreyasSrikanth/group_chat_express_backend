@@ -1,7 +1,7 @@
 const sequelize = require("sequelize");
 const database = require("../util/database");
 
-const archived = database.define('archivedChat',{
+const Archived = database.define('archivedChat',{
     id:{
         type: sequelize.INTEGER,
         autoIncrement: true,
@@ -23,4 +23,4 @@ const archived = database.define('archivedChat',{
     fileUrl: sequelize.STRING
 })
 
-module.exports = archived;
+module.exports = Archived;
