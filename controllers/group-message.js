@@ -10,7 +10,7 @@ exports.postGroupMessages = async(req,res,next) =>{
     let userId = req.user.userId;
     
     let response = await groupMessageModel.create({
-        message:usermessage,
+        text:usermessage,
         UserId:userId,
         groupId:groupId
     });

@@ -10,7 +10,7 @@ exports.postMessages = async(req,res,next) =>{
     await User.findOne({where:{id:req.user.userId}})
     .then(async(user) => {
         await Message.create({
-            message: usermessage,
+            text: usermessage,
             UserId: req.user.userId
         },{transaction:t})
         .then(async (result) =>{

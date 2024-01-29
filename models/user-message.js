@@ -8,7 +8,7 @@ const Message = database.define('messages',{
         autoNull: false,
         primaryKey:true
     },
-    message:{
+    text:{
         type:sequelize.STRING,
         autoNull:false
     },

@@ -731,13 +731,14 @@ function displayLastTenMessages(response) {
 
     if (normalchats === true) {
         newMessage.forEach((message) => {
+            console.log(message)
             let li = document.createElement('li');
             let userName;
             let userMessage;
 
             if (message.UserId === response.data.currentUserId) {
                 userName = "You";
-                userMessage = message.message;
+                userMessage = message.text;
             } else {
                 if (response.data.user && Array.isArray(response.data.user)) {
                     let user = response.data.user.find(user => user.id === message.UserId);
@@ -745,7 +746,7 @@ function displayLastTenMessages(response) {
                 } else {
                     userName = "Unknown";
                 }
-                userMessage = message.message;
+                userMessage = message.text;
             }
             if (userMessage != null) {
                 li.textContent = `${userName}: ${userMessage}`;
@@ -781,18 +782,19 @@ function displayLastTenMessages(response) {
         newMessage.forEach((message) => {
             let li = document.createElement('li');
 
+            console.log("groups",message.text)
             if (message.UserId === response.data.currentUserId) {
                 userName = "You";
-                userMessage = message.message;
+                userMessage = message.text;
             } else {
                 if (message.UserId === message.User.id) {
                     userName = message.User.name;
                 } else {
                     userName = "Unknown";
                 }
-                userMessage = message.message;
+                userMessage = message.text;
             }
-            if (message.message != null) {
+            if (message.text != null) {
                 li.textContent = `${userName}: ${userMessage}`;
             } else {
                 li.textContent = `${userName}`;
