@@ -21,7 +21,7 @@ async function userAuthentication(e) {
 
     try {
 
-        await axios.post("http://3.87.172.140:3000/users/login",{
+        await axios.post("http://localhost:3000/users/login",{
             email:email,
             pass:pass
         }).then(res => {

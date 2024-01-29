@@ -118,7 +118,7 @@ io.on("connection", socket => {
 sequelize.sync()
     .then(res => {
         server.listen(3000, () => {
-            console.log('Server running on http://3.87.172.140:3000');
+            console.log('Server running on http://localhost:3000');
         });
     })
     .catch(err => {
