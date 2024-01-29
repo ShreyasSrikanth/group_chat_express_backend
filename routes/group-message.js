@@ -17,9 +17,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-Router.post('/fetchgroupUsers',authUser.authentication,groupMessaageController.postGroupMessages);
+Router.post('/fetchgroupusers',authUser.authentication,groupMessaageController.postGroupMessages);
 Router.get('/fetchgroupmessages',authUser.authentication,groupMessaageController.getNewGroupMessages)
 Router.get('/fetchallgroupmessages',authUser.authentication,groupMessaageController.getAllMessages)
-Router.post('/filesUpload',upload.single('file'),authUser.authentication,groupMessaageController.filesUpload)
+Router.post('/filesupload',upload.single('file'),authUser.authentication,groupMessaageController.filesUpload)
 
 module.exports = Router;

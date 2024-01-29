@@ -19,8 +19,8 @@ const upload = multer({ storage });
 
 Router.post('/storechat',authUser.authentication,messageController.postMessages);
 Router.get('/getmessages',authUser.authentication,messageController.getMessages);
-Router.get('/getNewMessage',authUser.authentication,messageController.getNewMessages);
-Router.post('/filesUpload',upload.single('file'),authUser.authentication,messageController.filesUpload)
+Router.get('/getnewmessage',authUser.authentication,messageController.getNewMessages);
+Router.post('/filesupload',upload.single('file'),authUser.authentication,messageController.filesUpload)
 
 
 module.exports = Router;

@@ -111,7 +111,7 @@ async function fetchNewUsersForGroup() {
     let token = localStorage.getItem('token');
     let groupId = chatgroupusers[0].usergroups.groupId;
 
-    let response = await axios.get(`http://localhost:3000/groups/fetchNewUsers?groupId=${groupId}`)
+    let response = await axios.get(`http://localhost:3000/groups/fetchnewusers?groupId=${groupId}`)
     return response
 }
 
@@ -221,7 +221,7 @@ async function inviteUsers() {
 
         let groupId = chatgroupusers[0].usergroups.groupId;
         let response = await axios.post(
-            'http://localhost:3000/groups/addUserToGroup',
+            'http://localhost:3000/groups/addusertogroup',
             {
                 groupId: groupId,
                 groupUsers: invite
@@ -286,7 +286,7 @@ async function displayGroupUsers(groupName, groupId) {
 
     let token = localStorage.getItem("token");
 
-    let response = await axios.get(`http://localhost:3000/groups/fetchgroupUsers?groupId=${groupId}`, {
+    let response = await axios.get(`http://localhost:3000/groups/fetchgroupusers?groupId=${groupId}`, {
         headers: {
             'Authorization': token
         }
@@ -324,7 +324,7 @@ async function storeGroupMessages() {
         formData.append('file', fileInput.files[0]);
 
         try {
-            const response = await axios.post('http://localhost:3000/groupmessageRoute/filesUpload', formData, {
+            const response = await axios.post('http://localhost:3000/groupmessageRoute/filesupload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': token,
@@ -349,7 +349,7 @@ async function storeGroupMessages() {
         socket.emit("sendGroupMessages", text)
         document.getElementById('text').value = "";
 
-        let response = await axios.post(`http://localhost:3000/groupmessageRoute/fetchgroupUsers`, {
+        let response = await axios.post(`http://localhost:3000/groupmessageRoute/fetchgroupusers`, {
             message: text,
             groupId: groupId
         }, {
@@ -377,7 +377,7 @@ async function storeMessagestoBackend() {
         formData.append('file', fileInput.files[0]);
 
         try {
-            const response = await axios.post('http://localhost:3000/message/filesUpload', formData, {
+            const response = await axios.post('http://localhost:3000/message/filesupload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': token,
@@ -705,7 +705,7 @@ async function getMessagesfromBackend() {
 
 async function appendNewMessage() {
     let token = localStorage.getItem("token");
-    let response = await axios.get(`http://localhost:3000/message/getNewMessage`, {
+    let response = await axios.get(`http://localhost:3000/message/getnewmessage`, {
         headers: {
             'Authorization': token
         }
